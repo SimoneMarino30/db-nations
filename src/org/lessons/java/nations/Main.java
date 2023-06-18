@@ -1,6 +1,5 @@
 package org.lessons.java.nations;
 
-import java.math.BigInteger;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -41,7 +40,7 @@ public class Main {
             }
             try (Connection connection = DriverManager.getConnection(url, user, password)) {
                 // BONUS
-                String sqlMilestoneBonus = "SELECT c.name, l.language, cs.year, cs.population, cs.gdp FROM countries c JOIN country_languages cl ON c.country_id = cl.country_id JOIN languages l ON cl.language_id = l.language_id JOIN country_stats cs ON c.country_id = cs.country_id WHERE c.country_id LIKE ?;";
+                String sqlMilestoneBonus = "SELECT c.name as country_name, GROUP_CONCAT(DISTINCT l.language) as languages, cs.year, cs.population, cs.gdp FROM languages l JOIN country_languages cl ON l.language_id = cl.language_id JOIN countries c ON cl.country_id = c.country_id JOIN country_stats cs ON c.country_id = cs.country_id WHERE c.country_id LIKE ? GROUP BY c.name, cs.year DESC, cs.population, cs.gdp;";
                 System.out.println("What country id would you like to see?");
                 int wantedId = Integer.parseInt(scan.nextLine());
                 scan.close();
@@ -57,7 +56,7 @@ public class Main {
                             int countryPopulation = rs.getInt(4);
                             long countryGdp = rs.getLong(5);
                             System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");
-                            System.out.println("Country: " + countryName + " | \n" + "Languages spoken: " + countryLang + " | \n" + "Year: " + countryYear + " | \n" + "Population: " + countryPopulation + " | \n" + "Gdp: " + countryGdp);
+                            System.out.println("Country: " + countryName + " | \n" + "Languages spoken: " + countryLang + " | \n" + "Year: " + countryYear + " | \n" + "Population: " + countryPopulation + " | \n" + "Gdp: " + countryGdp + " |");
                             System.out.println("--------------------------------------------------------------------------------------------------------------------------------------");
                         }
                     }
